@@ -90,6 +90,7 @@ export default function AboutPage() {
           <a href="mailto:christianputra229@gmail.com" className="hover:underline">email</a>
           <a href="https://github.com/Putra-Christian618" target="_blank" rel="noreferrer" className="hover:underline">github</a>
           <a href="https://www.linkedin.com/in/christian-putra-7b95b7335/" target="_blank" rel="noreferrer" className="hover:underline">linkedin</a>
+          <a href="https://www.instagram.com/_christputr/" target="_blank" rel="noreferrer" className="hover:underline">instagram</a>
         </div>
       </section>
     </div>

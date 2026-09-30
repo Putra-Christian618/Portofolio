@@ -70,12 +70,13 @@ export default function Home() {
           let&apos;s connect
         </h2>
         <p className="text-sm text-secondary max-w-xl">
-          Interested in discussing machine learning research, data pipelines, or software engineering? You can reach out via email or connect through professional networks.
+          Interested in discussing machine learning research, data pipelines, or data engineering? You can reach out via email or connect through professional networks.
         </p>
         <div className="flex items-center gap-6 font-mono text-xs text-accent pt-2">
           <a href="mailto:christian.pradana@binus.ac.id" className="hover:underline">email</a>
           <a href="https://github.com/Putra-Christian618" target="_blank" rel="noreferrer" className="hover:underline">github</a>
           <a href="https://www.linkedin.com/in/christian-putra-7b95b7335/" target="_blank" rel="noreferrer" className="hover:underline">linkedin</a>
+          <a href="https://www.instagram.com/_christputr/" target="_blank" rel="noreferrer" className="hover:underline">instagram</a>
         </div>
       </section>
     </div>
