@@ -74,8 +74,8 @@ export default function Home() {
         </p>
         <div className="flex items-center gap-6 font-mono text-xs text-accent pt-2">
           <a href="mailto:christian.pradana@binus.ac.id" className="hover:underline">email</a>
-          <a href="https://github.com" target="_blank" rel="noreferrer" className="hover:underline">github</a>
-          <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="hover:underline">linkedin</a>
+          <a href="https://github.com/Putra-Christian618" target="_blank" rel="noreferrer" className="hover:underline">github</a>
+          <a href="https://www.linkedin.com/in/christian-putra-7b95b7335/" target="_blank" rel="noreferrer" className="hover:underline">linkedin</a>
         </div>
       </section>
     </div>
