@@ -46,7 +46,8 @@ export default function TopologicalMesh() {
 
     // Variabel state untuk cluster
     const clusters: Cluster[] = [];
-    const maxConcurrentClusters = 5; // Batasi jumlah grup graph yang aktif bersamaan
+    const maxConcurrentClusters = 30; // Batasi jumlah grup graph yang aktif bersamaan
+    const meshColorRGB = '59, 130, 246'; // Warna mesh (putih)
 
     // Fungsi untuk membuat node individual
     const createNode = (baseX: number, baseY: number): Node => ({
@@ -79,7 +80,7 @@ export default function TopologicalMesh() {
     };
 
     // Inisialisasi beberapa cluster di awal
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 12; i++) {
       clusters.push(createCluster());
     }
 
@@ -87,7 +88,7 @@ export default function TopologicalMesh() {
       ctx.clearRect(0, 0, width, height);
 
       // Secara acak tambahkan cluster baru jika jumlahnya kurang dari maksimum
-      if (clusters.length < maxConcurrentClusters && Math.random() < 0.01) {
+      if (clusters.length < maxConcurrentClusters && Math.random() < 0.04) {
         clusters.push(createCluster());
       }
 
@@ -117,7 +118,7 @@ export default function TopologicalMesh() {
         }
 
         // Terapkan opacity dasar untuk cluster ini (maksimal 40% agar tetap 'low-opacity' di background)
-        const baseOpacity = cluster.opacity * 0.4;
+        const baseOpacity = cluster.opacity * 0.45;
 
         // 2. Update posisi dan gambar node dalam cluster
         for (let j = 0; j < cluster.nodes.length; j++) {
@@ -134,8 +135,7 @@ export default function TopologicalMesh() {
           // Gambar node
           ctx.beginPath();
           ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
-          // Warna node: putih dengan opacity yang menyesuaikan siklus hidup
-          ctx.fillStyle = `rgba(255, 255, 255, ${baseOpacity})`;
+          ctx.fillStyle = `rgba(${meshColorRGB}, ${baseOpacity})`;
           ctx.fill();
 
           // 3. Gambar garis hanya dengan node lain DALAM CLUSTER YANG SAMA
@@ -147,8 +147,8 @@ export default function TopologicalMesh() {
             ctx.moveTo(node.x, node.y);
             ctx.lineTo(node2.x, node2.y);
             // Garis sedikit lebih transparan dari node
-            ctx.strokeStyle = `rgba(255, 255, 255, ${baseOpacity * 0.5})`;
-            ctx.lineWidth = 0.6;
+            ctx.strokeStyle = `rgba(${meshColorRGB}, ${baseOpacity * 0.5})`;
+            ctx.lineWidth = 0.8;
             ctx.stroke();
           }
         }
