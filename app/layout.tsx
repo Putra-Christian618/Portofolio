@@ -26,23 +26,27 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      {/* 
-        Menambahkan kelas warna latar belakang utama di body.
-        Pastikan ini sesuai dengan palet warna "near-black / charcoal" Anda.
-      */}
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#111111] text-gray-200 min-h-screen relative flex flex-col`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#111111] text-gray-200 min-h-screen relative`}
       >
-        {/* Render animasi Topological Mesh di latar belakang */}
+        {/* 
+          Animasi background dibiarkan di luar wrapper utama 
+          agar tetap merender sepenuh layar 
+        */}
         <TopologicalMesh />
         
-        {/* Navbar utama */}
-        <Navbar />
-
-        {/* Konten halaman akan di-render di dalam tag main ini */}
-        <main className="flex-grow">
-          {children}
-        </main>
+        {/* 
+          WRAPPER KONTEN: 
+          max-w-4xl membatasi lebar maksimal (sekitar 896px).
+          mx-auto menengahkan seluruh wrapper secara horizontal.
+          px-6 memberikan jarak aman di sisi kiri-kanan untuk layar HP.
+        */}
+        <div className="max-w-4xl mx-auto w-full px-6 flex flex-col min-h-screen">
+          <Navbar />
+          <main className="flex-grow pb-16">
+            {children}
+          </main>
+        </div>
       </body>
     </html>
   );
