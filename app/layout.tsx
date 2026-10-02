@@ -1,21 +1,22 @@
-import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
-import "./globals.css";
-import Navbar from "@/components/Navbar";
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
+import './globals.css';
+import Navbar from '@/components/Navbar';
+import TopologicalMesh from '@/components/TopologMesh';
 
-const inter = Inter({ 
-  subsets: ["latin"],
-  variable: '--font-inter'
+const geistSans = Geist({
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
-const jetbrainsMono = JetBrains_Mono({ 
-  subsets: ["latin"],
-  variable: '--font-jetbrains-mono'
+const geistMono = Geist_Mono({
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "Christian Putra | Computer Science Portfolio",
-  description: "A curated technical portfolio exploring data, machine learning, and intelligent systems.",
+  title: "Christian Putra - Portfolio",
+  description: "Computer Science student interested in building data-driven and intelligent systems.",
 };
 
 export default function RootLayout({
@@ -24,10 +25,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans`}>
-        <main className="min-h-screen max-w-5xl mx-auto px-6 md:px-12 py-6 md:py-12">
-          <Navbar />
+    <html lang="en" className="scroll-smooth">
+      {/* 
+        Menambahkan kelas warna latar belakang utama di body.
+        Pastikan ini sesuai dengan palet warna "near-black / charcoal" Anda.
+      */}
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#111111] text-gray-200 min-h-screen relative flex flex-col`}
+      >
+        {/* Render animasi Topological Mesh di latar belakang */}
+        <TopologicalMesh />
+        
+        {/* Navbar utama */}
+        <Navbar />
+
+        {/* Konten halaman akan di-render di dalam tag main ini */}
+        <main className="flex-grow">
           {children}
         </main>
       </body>
