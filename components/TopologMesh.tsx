@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef } from 'react';
 
-// Konfigurasi tipe data untuk node dan cluster
 interface Node {
   x: number;
   y: number;
@@ -14,9 +13,9 @@ interface Node {
 interface Cluster {
   id: number;
   nodes: Node[];
-  life: number;      // Umur cluster saat ini
-  maxLife: number;   // Umur maksimal sebelum mulai fade-out
-  opacity: number;   // Transparansi saat ini (berubah saat fade-in/out)
+  life: number;
+  maxLife: number;
+  opacity: number;
   state: 'fading-in' | 'alive' | 'fading-out';
 }
 
@@ -29,38 +28,35 @@ export default function TopologicalMesh() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Periksa aksesibilitas (prefers-reduced-motion)
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return; // Jangan jalankan animasi jika pengguna meminta pengurangan gerakan
+    if (prefersReducedMotion) return;
 
     let animationFrameId: number;
-    let width = (canvas.width = canvas.parentElement?.clientWidth || window.innerWidth);
-    let height = (canvas.height = canvas.parentElement?.clientHeight || window.innerHeight);
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
 
     const handleResize = () => {
-      width = canvas.width = canvas.parentElement?.clientWidth || window.innerWidth;
-      height = canvas.height = canvas.parentElement?.clientHeight || window.innerHeight;
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
     };
 
     window.addEventListener('resize', handleResize);
 
-    // Variabel state untuk cluster
     const clusters: Cluster[] = [];
-    const maxConcurrentClusters = 30; // Batasi jumlah grup graph yang aktif bersamaan
-    const meshColorRGB = '59, 130, 246'; // Warna mesh (putih)
+    const maxConcurrentClusters = 15;
+    
+    const meshColorRGB = '59, 130, 246';
 
-    // Fungsi untuk membuat node individual
     const createNode = (baseX: number, baseY: number): Node => ({
-      x: baseX + (Math.random() - 0.5) * 100, // Spawn di sekitar titik tengah cluster
+      x: baseX + (Math.random() - 0.5) * 100,
       y: baseY + (Math.random() - 0.5) * 100,
-      vx: (Math.random() - 0.5) * 0.4, // Kecepatan gerak (sesuaikan jika terlalu cepat/lambat)
+      vx: (Math.random() - 0.5) * 0.4,
       vy: (Math.random() - 0.5) * 0.4,
-      radius: Math.random() * 1.5 + 0.8, // Ukuran bervariasi tapi relatif kecil
+      radius: Math.random() * 1.5 + 0.8,
     });
 
-    // Fungsi untuk membuat cluster (grup graph) baru
     const createCluster = (): Cluster => {
-      const numNodes = Math.floor(Math.random() * 3) + 3; // Antara 3 - 5 node per cluster
+      const numNodes = Math.floor(Math.random() * 3) + 3;
       const centerX = Math.random() * width;
       const centerY = Math.random() * height;
       const nodes: Node[] = [];
@@ -73,30 +69,31 @@ export default function TopologicalMesh() {
         id: Math.random(),
         nodes,
         life: 0,
-        maxLife: Math.random() * 300 + 400, // Umur cluster antara 400-700 frame (sekitar 6-11 detik)
+        maxLife: Math.random() * 300 + 400,
         opacity: 0,
         state: 'fading-in',
       };
     };
 
-    // Inisialisasi beberapa cluster di awal
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 3; i++) {
       clusters.push(createCluster());
     }
 
     const draw = () => {
+      if (document.hidden) {
+        animationFrameId = requestAnimationFrame(draw);
+        return;
+      }
+
       ctx.clearRect(0, 0, width, height);
 
-      // Secara acak tambahkan cluster baru jika jumlahnya kurang dari maksimum
-      if (clusters.length < maxConcurrentClusters && Math.random() < 0.04) {
+      if (clusters.length < maxConcurrentClusters && Math.random() < 0.015) {
         clusters.push(createCluster());
       }
 
-      // Loop melalui setiap cluster
       for (let i = clusters.length - 1; i >= 0; i--) {
         const cluster = clusters[i];
 
-        // 1. Update status siklus hidup cluster
         if (cluster.state === 'fading-in') {
           cluster.opacity += 0.01;
           if (cluster.opacity >= 1) {
@@ -111,44 +108,34 @@ export default function TopologicalMesh() {
         } else if (cluster.state === 'fading-out') {
           cluster.opacity -= 0.005;
           if (cluster.opacity <= 0) {
-            // Hapus cluster jika sudah sepenuhnya memudar
             clusters.splice(i, 1);
-            continue; // Lanjut ke iterasi cluster berikutnya
+            continue;
           }
         }
 
-        // Terapkan opacity dasar untuk cluster ini (maksimal 40% agar tetap 'low-opacity' di background)
-        const baseOpacity = cluster.opacity * 0.45;
+        const baseOpacity = cluster.opacity * 0.4;
 
-        // 2. Update posisi dan gambar node dalam cluster
         for (let j = 0; j < cluster.nodes.length; j++) {
           const node = cluster.nodes[j];
 
-          // Pergerakan
           node.x += node.vx;
           node.y += node.vy;
 
-          // Bounce ringan jika menyentuh batas layar (opsional, tapi bagus agar node tidak hilang begitu saja)
           if (node.x < 0 || node.x > width) node.vx *= -1;
           if (node.y < 0 || node.y > height) node.vy *= -1;
 
-          // Gambar node
           ctx.beginPath();
           ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(${meshColorRGB}, ${baseOpacity})`;
           ctx.fill();
 
-          // 3. Gambar garis hanya dengan node lain DALAM CLUSTER YANG SAMA
           for (let k = j + 1; k < cluster.nodes.length; k++) {
             const node2 = cluster.nodes[k];
-            
-            // Gambar garis terlepas dari jarak, atau Anda bisa tambahkan batasan jarak di sini
             ctx.beginPath();
             ctx.moveTo(node.x, node.y);
             ctx.lineTo(node2.x, node2.y);
-            // Garis sedikit lebih transparan dari node
             ctx.strokeStyle = `rgba(${meshColorRGB}, ${baseOpacity * 0.5})`;
-            ctx.lineWidth = 0.8;
+            ctx.lineWidth = 0.6;
             ctx.stroke();
           }
         }
@@ -157,7 +144,7 @@ export default function TopologicalMesh() {
       animationFrameId = requestAnimationFrame(draw);
     };
 
-    draw(); // Mulai loop animasi
+    draw();
 
     return () => {
       window.removeEventListener('resize', handleResize);
@@ -166,8 +153,13 @@ export default function TopologicalMesh() {
   }, []);
 
   return (
-    // Container absolut di belakang semua konten (z-index negatif, pointer-events-none)
-    <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+    <div 
+      className="fixed inset-0 -z-10 pointer-events-none"
+      style={{
+        WebkitMaskImage: 'linear-gradient(to bottom, black 30%, transparent 100%)',
+        maskImage: 'linear-gradient(to bottom, black 30%, transparent 100%)'
+      }}
+    >
       <canvas ref={canvasRef} className="block w-full h-full" />
     </div>
   );

@@ -1,82 +1,70 @@
-// app/page.tsx
 import { projects } from '@/lib/projectsData';
 import ProjectCard from '@/components/ProjectCard';
+import { siteConfig } from '@/lib/siteConfig';
 import Link from 'next/link';
 
 export default function Home() {
+  const featuredProjects = projects.filter((project) => project.featured);
+
   return (
-    <div className="space-y-16 animate-in fade-in duration-700">
-      {/* Hero Section */}
+    <div className="space-y-12 md:space-y-16 animate-in fade-in duration-700">
       <section className="space-y-6">
         <div className="space-y-2">
           <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-primary">
-            Christian Putra
+            {siteConfig.author}
           </h1>
-          <p className="font-mono text-sm md:text-base text-accent">
-            Computer Science Student
+          <p className="font-mono text-sm md:text-base text-secondary">
+            {siteConfig.role} · {siteConfig.focusLine}
           </p>
         </div>
         
-        <div className="space-y-4 max-w-2xl text-secondary leading-relaxed">
+        <div className="space-y-4 max-w-xl text-secondary leading-relaxed">
           <p className="text-lg md:text-xl text-primary">
-            I am a Computer Science student interested in building data-driven and intelligent systems.
-          </p>
-          <p className="text-sm md:text-base">
-            Through academic and independent projects, I have explored machine learning, deep learning, data analytics, and big data processing—from training classification models and analyzing business data to building distributed data pipelines.
-          </p>
-          <p className="text-sm md:text-base">
-            I enjoy understanding the process behind a solution: preparing the data, experimenting with different approaches, evaluating the results, and turning the outcome into something useful.
+            {siteConfig.tagline}
           </p>
         </div>
 
         <div className="flex items-center gap-4 pt-2">
           <Link 
             href="/projects" 
-            className="px-5 py-2.5 rounded bg-primary text-background font-mono text-xs font-medium hover:bg-accent transition-colors"
+            className="px-5 py-2.5 rounded bg-primary text-background font-mono text-xs font-medium hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-all"
           >
             explore all work
           </Link>
           <Link 
             href="/resume" 
-            className="px-5 py-2.5 rounded border border-border text-primary font-mono text-xs hover:border-accent transition-colors"
+            className="px-5 py-2.5 rounded border border-border text-primary font-mono text-xs hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-all"
           >
             view resume
           </Link>
         </div>
       </section>
 
-      {/* Selected Work Section */}
-      <section className="space-y-8 pt-8 border-t border-border/40">
+      <section className="space-y-6 pt-8 border-t border-border/40">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold font-mono tracking-tight text-primary">
-            {/* selected work */}
             selected work
           </h2>
-          <span className="text-xs font-mono text-secondary">
-            5 core projects
-          </span>
+          <Link href="/projects" className="text-xs font-mono text-secondary hover:text-accent transition-colors py-2">
+            view all {projects.length} projects →
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {projects.map((project) => (
+          {featuredProjects.map((project) => (
             <ProjectCard key={project.slug} project={project} />
           ))}
         </div>
       </section>
 
-      {/* Let's Connect Section */}
       <section className="space-y-4 pt-8 border-t border-border/40 pb-12">
         <h2 className="text-xl font-semibold font-mono tracking-tight text-primary">
           let&apos;s connect
         </h2>
-        <p className="text-sm text-secondary max-w-xl">
-          Interested in discussing machine learning research, data pipelines, or data engineering? You can reach out via email or connect through professional networks.
-        </p>
         <div className="flex items-center gap-6 font-mono text-xs text-accent pt-2">
-          <a href="mailto:christian.pradana@binus.ac.id" className="hover:underline">email</a>
-          <a href="https://github.com/Putra-Christian618" target="_blank" rel="noreferrer" className="hover:underline">github</a>
-          <a href="https://www.linkedin.com/in/christian-putra-7b95b7335/" target="_blank" rel="noreferrer" className="hover:underline">linkedin</a>
-          <a href="https://www.instagram.com/_christputr/" target="_blank" rel="noreferrer" className="hover:underline">instagram</a>
+          <a href={`mailto:${siteConfig.email}`} className="hover:underline py-2">email</a>
+          <a href={siteConfig.socials.github} target="_blank" rel="noopener noreferrer" className="hover:underline py-2">github</a>
+          <a href={siteConfig.socials.linkedin} target="_blank" rel="noopener noreferrer" className="hover:underline py-2">linkedin</a>
         </div>
       </section>
     </div>
